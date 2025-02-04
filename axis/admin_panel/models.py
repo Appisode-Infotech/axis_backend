@@ -107,7 +107,7 @@ class CustomerAccount(models.Model):
 class CashDeposit(models.Model):
     account = models.ForeignKey(CustomerAccount, on_delete=models.CASCADE, related_name='cash_deposits')
     amount = models.DecimalField(max_digits=10, decimal_places=2)
-    deposit_date = models.DateTimeField(auto_now_add=True)
+    deposit_date = models.DateTimeField()
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
