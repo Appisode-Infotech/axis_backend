@@ -43,7 +43,6 @@ JAZZMIN_SETTINGS = {
     ],
 }
 
-
 INSTALLED_APPS = [
     'jazzmin',
     'django.contrib.admin',
@@ -91,12 +90,20 @@ WSGI_APPLICATION = 'axis.wsgi.application'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 DATABASES = {
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.mysql',
+    #     'NAME': 'axis_clone',
+    #     'USER': 'root',
+    #     'PASSWORD': 'root',
+    #     'HOST': 'localhost',
+    #     'PORT': '3306',
+    # }
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'axis_clone',
-        'USER': 'root',
-        'PASSWORD': 'root',
-        'HOST': 'localhost',
+        'NAME': 'AxisSupport$default',
+        'USER': 'AxisSupport',
+        'PASSWORD': 'Axis@#123',
+        'HOST': 'AxisSupport.mysql.pythonanywhere-services.com',
         'PORT': '3306',
     }
     # 'default': {
