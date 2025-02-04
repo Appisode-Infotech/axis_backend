@@ -2,3 +2,4 @@ Django
 djangorestframework
 drf-yasg
 mysqlclient
+django-jazzmin
