@@ -169,5 +169,5 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'  # Replace with your email provider's SMTP server
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'your_email@gmail.com'  # Replace with your email address
-EMAIL_HOST_PASSWORD = 'your_password'  # Replace with your email password
+EMAIL_HOST_USER = 'axis.setups@gmail.com'  # Replace with your email address
+EMAIL_HOST_PASSWORD = 'bqrt tbws ylpw zhwh'  # Replace with your email password

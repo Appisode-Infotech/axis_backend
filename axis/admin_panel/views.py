@@ -105,18 +105,18 @@ class GenerateOTPAPIView(APIView):
         otp = f"{random.randint(100000, 999999)}"
 
         # Send the OTP email
-        # try:
-        #     send_mail(
-        #         subject="Your OTP Code",
-        #         message=f"Your OTP code is {otp}.",
-        #         from_email="your_email@gmail.com",  # Replace with your email address
-        #         recipient_list=[email],
-        #     )
-        # except Exception as e:
-        #     return Response(
-        #         {"error": f"Failed to send OTP: {str(e)}"},
-        #         status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-        #     )
+        try:
+            send_mail(
+                subject="Your OTP Code",
+                message=f"Your OTP code is {otp}.",
+                from_email="axis.setups@gmail.com",  # Replace with your email address
+                recipient_list=[email],
+            )
+        except Exception as e:
+            return Response(
+                {"error": f"Failed to send OTP: {str(e)}"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
 
         # Return the OTP in the response
         print(otp)
