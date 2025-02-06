@@ -80,7 +80,7 @@ class TransactionSerializer(serializers.ModelSerializer):
                 sender_account=obj.sender,
                 amount=obj.amount,
                 transaction_date=obj.transaction_date,
-                reference_number=obj.reference_number
+                # reference_number=obj.reference_number
             ).first()
             return transfer.receiver_name if transfer else None
         return None
