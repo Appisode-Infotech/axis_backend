@@ -65,6 +65,44 @@ class TransactionSerializer(serializers.ModelSerializer):
     sender = CustomerAccountSerializer(read_only=True)
     receiver = CustomerAccountSerializer(read_only=True)
 
+    # Add fields for external receiver details
+    receiver_name = serializers.SerializerMethodField()
+    receiver_account_number = serializers.SerializerMethodField()
+    receiver_ifsc_code = serializers.SerializerMethodField()
+
     class Meta:
         model = Transaction
         fields = '__all__'
+
+    def get_receiver_name(self, obj):
+        if obj.receiver is None:
+            transfer = OtherBankTransfer.objects.filter(
+                sender_account=obj.sender,
+                amount=obj.amount,
+                transaction_date=obj.transaction_date,
+                reference_number=obj.reference_number
+            ).first()
+            return transfer.receiver_name if transfer else None
+        return None
+
+    def get_receiver_account_number(self, obj):
+        if obj.receiver is None:
+            transfer = OtherBankTransfer.objects.filter(
+                sender_account=obj.sender,
+                amount=obj.amount,
+                transaction_date=obj.transaction_date,
+                reference_number=obj.reference_number
+            ).first()
+            return transfer.receiver_account_number if transfer else None
+        return None
+
+    def get_receiver_ifsc_code(self, obj):
+        if obj.receiver is None:
+            transfer = OtherBankTransfer.objects.filter(
+                sender_account=obj.sender,
+                amount=obj.amount,
+                transaction_date=obj.transaction_date,
+                reference_number=obj.reference_number
+            ).first()
+            return transfer.receiver_ifsc_code if transfer else None
+        return None
