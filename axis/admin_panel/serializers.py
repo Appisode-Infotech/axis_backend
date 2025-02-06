@@ -91,7 +91,7 @@ class TransactionSerializer(serializers.ModelSerializer):
                 sender_account=obj.sender,
                 amount=obj.amount,
                 transaction_date=obj.transaction_date,
-                reference_number=obj.reference_number
+                # reference_number=obj.reference_number
             ).first()
             return transfer.receiver_account_number if transfer else None
         return None
@@ -102,7 +102,7 @@ class TransactionSerializer(serializers.ModelSerializer):
                 sender_account=obj.sender,
                 amount=obj.amount,
                 transaction_date=obj.transaction_date,
-                reference_number=obj.reference_number
+                # reference_number=obj.reference_number
             ).first()
             return transfer.receiver_ifsc_code if transfer else None
         return None
