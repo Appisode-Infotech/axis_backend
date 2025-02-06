@@ -74,32 +74,31 @@ class TransactionSerializer(serializers.ModelSerializer):
         model = Transaction
         fields = '__all__'
 
+    def get_matching_other_bank_transfer(self, obj):
+        """
+        Find a matching OtherBankTransfer instance based on sender, amount, and approximate time.
+        """
+        transfer = OtherBankTransfer.objects.filter(
+            sender_account=obj.sender,
+            amount=obj.amount,
+            transfer_date__date=obj.transaction_date.date(),  # Match only the date part
+        ).first()
+        return transfer
+
     def get_receiver_name(self, obj):
         if obj.receiver is None:
-            transfer = OtherBankTransfer.objects.filter(
-                sender_account=obj.sender,
-                amount=obj.amount,
-                transfer_date=obj.transaction_date,  # Changed from transaction_date to transfer_date
-            ).first()
+            transfer = self.get_matching_other_bank_transfer(obj)
             return transfer.receiver_name if transfer else None
         return None
 
     def get_receiver_account_number(self, obj):
         if obj.receiver is None:
-            transfer = OtherBankTransfer.objects.filter(
-                sender_account=obj.sender,
-                amount=obj.amount,
-                transfer_date=obj.transaction_date,  # Changed from transaction_date to transfer_date
-            ).first()
+            transfer = self.get_matching_other_bank_transfer(obj)
             return transfer.receiver_account_number if transfer else None
         return None
 
     def get_receiver_ifsc_code(self, obj):
         if obj.receiver is None:
-            transfer = OtherBankTransfer.objects.filter(
-                sender_account=obj.sender,
-                amount=obj.amount,
-                transfer_date=obj.transaction_date,  # Changed from transaction_date to transfer_date
-            ).first()
+            transfer = self.get_matching_other_bank_transfer(obj)
             return transfer.receiver_ifsc_code if transfer else None
         return None
