@@ -44,6 +44,15 @@ class TransactionAdmin(admin.ModelAdmin):
     search_fields = ('sender__account_number', 'receiver__account_number')
     list_filter = ('transaction_type', 'transaction_date')
 
+    def has_add_permission(self, request):
+        return False  # Prevent adding transactions
+
+    def has_change_permission(self, request, obj=None):
+        return False  # Prevent modifying transactions
+
+    def has_delete_permission(self, request, obj=None):
+        return False  # Prevent deleting transactions
+
 
 @admin.register(Notification)
 class NotificationAdmin(admin.ModelAdmin):
