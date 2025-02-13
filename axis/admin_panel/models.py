@@ -97,7 +97,7 @@ class CustomerAccount(models.Model):
     )
     account_type = models.CharField(max_length=10, choices=ACCOUNT_TYPES)
     kyc_status = models.BooleanField(default=False)
-    current_balance = models.DecimalField(max_digits=15, decimal_places=2, default=0.00)
+    current_balance = models.DecimalField(max_digits=17, decimal_places=2, default=0.00)
 
     def __str__(self):
         return f"{self.account_number} ({self.get_account_type_display()})"
@@ -106,7 +106,7 @@ class CustomerAccount(models.Model):
 # TRANSACTIONS
 class CashDeposit(models.Model):
     account = models.ForeignKey(CustomerAccount, on_delete=models.CASCADE, related_name='cash_deposits')
-    amount = models.DecimalField(max_digits=15, decimal_places=2)
+    amount = models.DecimalField(max_digits=17, decimal_places=2)
     deposit_date = models.DateTimeField()
 
     def save(self, *args, **kwargs):
@@ -143,7 +143,7 @@ class InterBankTransfer(models.Model):
 
     sender_account = models.ForeignKey(CustomerAccount, on_delete=models.CASCADE, related_name='sent_transfers')
     receiver_account = models.ForeignKey(CustomerAccount, on_delete=models.CASCADE, related_name='received_transfers')
-    amount = models.DecimalField(max_digits=15, decimal_places=2)
+    amount = models.DecimalField(max_digits=17, decimal_places=2)
     transfer_method = models.CharField(max_length=10, choices=TRANSFER_METHODS)
     transfer_date = models.DateTimeField(auto_now_add=True)
 
@@ -196,7 +196,7 @@ class OtherBankTransfer(models.Model):
         max_length=11,
         validators=[RegexValidator(r'^[A-Z]{4}0[A-Z0-9]{6}$', 'Invalid IFSC code format.')]
     )
-    amount = models.DecimalField(max_digits=15, decimal_places=2)
+    amount = models.DecimalField(max_digits=17, decimal_places=2)
     transfer_method = models.CharField(max_length=10, choices=TRANSFER_METHODS)
     transfer_date = models.DateTimeField(auto_now_add=True)
 
@@ -231,7 +231,7 @@ class Transaction(models.Model):
                                related_name='transactions_sent')
     receiver = models.ForeignKey(CustomerAccount, on_delete=models.SET_NULL, null=True, blank=True,
                                  related_name='transactions_received')
-    amount = models.DecimalField(max_digits=15, decimal_places=2)
+    amount = models.DecimalField(max_digits=17, decimal_places=2)
     transaction_type = models.CharField(max_length=10, choices=[('credit', 'Credit'), ('debit', 'Debit')])
     transaction_date = models.DateTimeField(auto_now_add=True)
     reference_number = models.CharField(max_length=100, unique=True, blank=True, null=True)
