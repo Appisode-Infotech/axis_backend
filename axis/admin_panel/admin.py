@@ -1,6 +1,7 @@
 from django.contrib import admin
+
 from .models import Customer, CustomerAccount, CashDeposit, InterBankTransfer, OtherBankTransfer, Notification, \
-    Transaction
+    Transaction, InwardRemittance
 
 
 @admin.register(Customer)
@@ -59,3 +60,11 @@ class NotificationAdmin(admin.ModelAdmin):
     list_display = ('recipient', 'message', 'notification_type', 'created_at')
     list_filter = ('notification_type', 'created_at')
     search_fields = ('recipient__full_name', 'message')
+
+
+@admin.register(InwardRemittance)
+class InwardRemittanceAdmin(admin.ModelAdmin):
+    list_display = (
+        'receiver_account', 'sender_name', 'sender_account_number', 'amount', 'transfer_method', 'transfer_date')
+    search_fields = ('sender_name', 'sender_account_number')
+    list_filter = ('transfer_method', 'transfer_date')

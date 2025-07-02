@@ -1,10 +1,10 @@
+import datetime
 import uuid
 
-from django.db import models
-from django.core.validators import MinLengthValidator, MaxLengthValidator, RegexValidator
 from django.core.exceptions import ValidationError
-import datetime
 from django.core.mail import send_mail
+from django.core.validators import MinLengthValidator, MaxLengthValidator, RegexValidator
+from django.db import models
 
 
 # CUSTOMERS
@@ -134,6 +134,55 @@ class CashDeposit(models.Model):
         return f"Deposit of {self.amount} to {self.account.account_number}"
 
 
+class InwardRemittance(models.Model):
+    TRANSFER_METHODS = [
+        ('WIRE', 'WIRE'),
+        ('IMPS', 'IMPS'),
+        ('NEFT', 'NEFT'),
+        ('UPI', 'UPI'),
+        ('RTGS', 'RTGS'),
+    ]
+
+    receiver_account = models.ForeignKey(CustomerAccount, on_delete=models.CASCADE, related_name='inward_remittances')
+    sender_name = models.CharField(max_length=255, blank=False)
+    sender_account_number = models.CharField(
+        max_length=20,
+        validators=[RegexValidator(r'^\d+$', 'Sender account number must contain only digits.')]
+    )
+    sender_ifsc_code = models.CharField(
+        max_length=11,
+        validators=[RegexValidator(r'^[A-Z]{4}0[A-Z0-9]{6}$', 'Invalid IFSC code format.')]
+    )
+    amount = models.DecimalField(max_digits=17, decimal_places=2)
+    transfer_method = models.CharField(max_length=10, choices=TRANSFER_METHODS)
+    transfer_date = models.DateTimeField(auto_now_add=True)
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        self.receiver_account.current_balance += self.amount
+        self.receiver_account.save()
+
+        Notification.objects.create(
+            recipient=self.receiver_account.customer,
+            message=f"Received {self.amount} from {self.sender_name} ({self.sender_account_number})",
+            notification_type='credit'
+        )
+
+        random_part = uuid.uuid4().hex[:6].upper()  # Random string
+        Transaction.objects.create(
+            sender=None,
+            receiver=self.receiver_account,
+            amount=self.amount,
+            transaction_type='credit',
+            transaction_date=self.transfer_date,
+            reference_number=f'{self.transfer_method}/INWARD/{random_part}',
+            sender_name_external=self.sender_name
+        )
+
+    def __str__(self):
+        return f"Received {self.amount} from {self.sender_account_number} ({self.sender_name})"
+
+
 class InterBankTransfer(models.Model):
     TRANSFER_METHODS = [
         ('IMPS', 'IMPS'),
@@ -235,6 +284,12 @@ class Transaction(models.Model):
     transaction_type = models.CharField(max_length=10, choices=[('credit', 'Credit'), ('debit', 'Debit')])
     transaction_date = models.DateTimeField(auto_now_add=True)
     reference_number = models.CharField(max_length=100, unique=True, blank=True, null=True)
+    sender_name_external = models.CharField(
+        max_length=255,
+        blank=True,
+        null=True,
+        help_text="Used only for inward remittance from external sender"
+    )
 
     def __str__(self):
         return f"Transaction of {self.amount} ({self.transaction_type}) on {self.transaction_date}"
