@@ -155,7 +155,8 @@ class InwardRemittance(models.Model):
     )
     amount = models.DecimalField(max_digits=17, decimal_places=2)
     transfer_method = models.CharField(max_length=10, choices=TRANSFER_METHODS)
-    transfer_date = models.DateTimeField(auto_now_add=True)
+    transfer_date = models.DateTimeField()
+    remarks = models.TextField(blank=True, null=True, help_text="Optional remarks or purpose for the inward remittance")
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
